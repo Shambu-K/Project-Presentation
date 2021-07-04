@@ -1,0 +1,392 @@
+\documentclass{beamer}
+\usepackage{listings}
+\lstset{
+%language=C,
+frame=single, 
+breaklines=true,
+columns=fullflexible
+}
+
+\usepackage{amssymb}
+\usepackage{blkarray}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{tkz-euclide} % loads  TikZ and tkz-base
+%\usetkzobj{all}
+\usetikzlibrary{calc,math}
+\usepackage{float}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\usepackage[export]{adjustbox}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{bm}
+\hypersetup{
+    colorlinks = true,
+    linkbordercolor = {white},
+    linkcolor={red},
+    citecolor={green},
+    filecolor={blue},
+	menucolor={red},
+	runcolor={cyan},
+	urlcolor={blue},
+	breaklinks=true
+}
+\usetikzlibrary{automata, positioning}
+\usetheme{Boadilla}
+\providecommand{\pr}[1]{\ensuremath{\Pr\left(#1\right)}}
+\providecommand{\mbf}{\mathbf}
+\providecommand{\qfunc}[1]{\ensuremath{Q\left(#1\right)}}
+\providecommand{\sbrak}[1]{\ensuremath{{}\left[#1\right]}}
+\providecommand{\lsbrak}[1]{\ensuremath{{}\left[#1\right.}}
+\providecommand{\rsbrak}[1]{\ensuremath{{}\left.#1\right]}}
+\providecommand{\brak}[1]{\ensuremath{\left(#1\right)}}
+\providecommand{\lbrak}[1]{\ensuremath{\left(#1\right.}}
+\providecommand{\rbrak}[1]{\ensuremath{\left.#1\right)}}
+\providecommand{\cbrak}[1]{\ensuremath{\left\{#1\right\}}}
+\providecommand{\lcbrak}[1]{\ensuremath{\left\{#1\right.}}
+\providecommand{\rcbrak}[1]{\ensuremath{\left.#1\right\}}}
+\providecommand{\abs}[1]{\vert#1\vert}
+
+\newcounter{saveenumi}
+\newcommand{\seti}{\setcounter{saveenumi}{\value{enumi}}}
+\newcommand{\conti}{\setcounter{enumi}{\value{saveenumi}}}
+
+\makeatletter
+\newenvironment<>{proofs}[1][\proofname]{%
+    \par
+    \def\insertproofname{#1\@addpunct{.}}%
+    \usebeamertemplate{proof begin}#2}
+  {\usebeamertemplate{proof end}}
+\makeatother
+
+\title{Research Paper Presentation}
+\author{Shambhu Prasad Kavir}
+\date{CS20BTECH11045}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Title and authors}
+\begin{block}{Title}
+Energy Efficient Distributed Learning With Coarsely Quantized Signals
+\end{block}
+\begin{block}{Authors}
+\begin{enumerate}
+\item Alireza Danaee
+\item Rodgrigo C. de Lamare
+\item Vítor H. Nascimento
+\end{enumerate}
+\end{block}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Introduction}
+\begin{enumerate}[]
+\item Distributed signal processing are of great relevance for statistical inference in wireless networks and applications such as wireless sensor networks and IoT. These techniques deal with the extraction of information from data collected at nodes that are distributed over a geographical area.
+
+\item Energy efficient signal processing techniques have gained a great deal of interest in the last decade or so due to their ability to save energy and promote sustainable development of electronic systems and devices 
+\item Electronic devices often exhibit a power consumption that depends on the communication module, and from a circuit perspective on analog-to-digital converters(ADCs) and decoders.
+\item We present an energy-efficient distributed learning framework using low resolution ADCs and coarsely quantized signals for Internet of Things(IoT) networks.
+
+\end{enumerate}
+
+\end{frame}
+
+
+
+\begin{frame}{Signal Model and Problem Statement}
+Consider an IoT network consisting of $N$ nodes or agents which run distributed signal processing techniques to perform the desired tasks, as depicted in the figure: 
+
+\begin{figure}[!tbp]
+  \centering
+  {\includegraphics[width=0.5\textwidth]{1A.png}\label{fig:1A}}
+  
+  \caption{1a) A distributed adaptive IoT network}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Signal Model and Problem Statement}
+The model adopted considers a desired signal $d_k(i)$, at each time $i$, described by 
+\begin{align}
+    d_k(i) = w_0^Hx_k(i) + v_k(i) \hspace{2cm}k=1,2,.....,N,
+   \end{align}
+
+where $w_0 \in \mathbb{C}^{M\times 1}$  is the parameter vector that the agents must estimate, $x_k(i)\in \mathbb{C}^{M\times 1}$ is the regressor and $v_k(i)$ represents Gaussian noise with zero mean and variance $\sigma^2_{v,k}$ at node $k$.
+\newline
+We now adopt the Adapt-then-Continue diffusion rule. At each node $k$ and time $i$, based on the local data $\{d_k(i),x_k(i) \}$ and the estimated parameter vectors $h_l(i)$ from its neighbourhood, the parameter vector with local estimates $w_k(i)$ is updated.
+\end{frame}
+
+\begin{frame}{Signal Model and Problem Statement}
+The ATC distributed LMS(DLMS) algorithm consists of the  recursions:
+\begin{align}
+    h_k(i) = w_k(i-1) = \mu_kx_k(i)e_k^*(i), \hspace{1cm} w_k(i) = \sum_{l \in N_k}{a_{lk}h_l(i)},
+\end{align}
+\begin{enumerate}[]
+    \item where $h_k(i)$ and $w_k(i)$ contain the intermediate and local estimates of $w_0$ at time $i$ and node $k$, respectively,
+\end{enumerate}
+
+\begin{align}
+e_k(i) = d_k(i) - \hat{d}_k(i) = d_k(i) - w_k^H(i-1)x_k(i)
+\end{align}
+\begin{enumerate}[]
+    \item Here, $e_k(i)$ is the error between the output of the adaptive filter,$\hat{d}_k(i)$, and the the desired signal,$d_k(i)$, at time $i$,
+    \item $\mu_k$ is the step-size for node $k$,
+    \item  $N_k$ is the set of neighbour nodes connected to node $k$,
+\end{enumerate}
+ 
+
+
+
+
+\end{frame}
+
+\begin{frame}{Signal Model and Problem Statement}
+\begin{enumerate}[]
+    \item  $a_{lk}$ are the combination coefficents of the neighbour nodes at node k such that
+\end{enumerate}
+
+ \begin{align}
+     a_{lk} = 0 \hspace{0.2cm}if  {l \notin N_k}, a_{lk}>0 \hspace{0.2cm} if {l \in N_k},\hspace{0.2cm} and \sum_{l \in N_k}a_{lk} = 1
+ \end{align}
+ 
+ \begin{enumerate}
+     \item From figure 1a, as the measurement data in each node and the analog system are analog and each agent processes local data $\{d_k(i),x_k(i) \}$ , we need two ADCs per agent.
+     \item As number of agents increases, the power consumption will grow considerably, when using high resolution ADCs for each agent.
+     \item This encourages us to quantize signals using fewer bits
+ \end{enumerate}
+ 
+Thus, the problem we are interested in solving is how to design energy-efficient learning algorithms that can cost effectively operate with coarsely quantized signals.
+ 
+
+
+
+
+\end{frame}
+
+\begin{frame}{Proposed DQA-LMS Algorithm}
+\begin{enumerate}[]
+    \item Let $x_{k,Q}=Q_{b}(x_k)$ denote the b-bit quantized output of an ADC at node k,described by a set of $2^{b}+1$ thresholds $\mathcal{T}_b = \{\tau_0,\tau_1,....,\tau_{2^b}  \}$,such that $-\infty=\tau_0<\tau_1<...<\tau_{2^b}=\infty$, and the set of $2^b$ labels $\mathcal{L}_b= \{\ell_0,\ell_1,....\ell_{2^{b-1}}   \}$ where $\ell_p \in (\tau_p,\tau_{p+1}]$, for $p\in [0,2^b-1]$
+    \item Let us assume $x_k \sim \mathcal{C}\mathcal{N}(0,R_{x_k})$, where $R_{x_k} \in \mathbb{C}^{M\times M}$ is the covariance matrix of $x_k$.
+\end{enumerate}
+Employing Bussgang's theorem, $x_{k,Q}$ can be decomposed as 
+\begin{align}
+    x_{k,Q} = G_{k,b}x_k + q_k ,
+\end{align}
+where the quantization distortion $q_k$ is uncorrelated with $x_k$ and $G_{k,b}\in \mathbb{R}^{M\times M}$ is a diagonal matrix described by 
+\begin{align}
+    G_{k,b} = {diag(R_{x_k})}^{-{\frac{1}{2}}}\sum_{j=0}^{2^b-1}{\frac{\ell_j}{\sqrt \pi}}[\exp(-{\mathcal{T}_j}^2){diag(R_{x_k})^{-1}}) \\ - \exp(-{\mathcal{T}_{j+1}}^2){diag(R_{x_k})^{-1}})]
+\end{align}
+
+    
+\end{frame}
+
+\begin{frame}{Proposed DQA-LMS Algorithm}
+\begin{enumerate}[]
+    \item This signal decomposition is also applied to the desired signal $d_k(i)$, which is the output of the second ADC in the system, and for the particular case that $R_{x_k} = \mathbb{E}[x_k{x_k}^H] = \sigma^2_{x,k}I_{M}$, $ G_{k,b}$ becomes $g_{k,b}I_M$.
+\end{enumerate}
+To minimize the mean square error(MSE), between $x_q$ and $x_{k,Q}$ we need to characterize the PDF of $x_k$ to find the optimum quantization labels. Since the choice of labels based on PDF is not practical we assume the regressor $x_k$ to be Gaussian, and approximate the labels and thresholds as follows:
+
+\begin{enumerate}[]
+\item We generate an auxiliary Gaussian random variable with unit variance and then use Lloyd-Max algorithm to find a set of thresholds ${\Tilde{\mathcal{T}}}_b = \{\tau_1,\tau_2,....,\tau_{2^b-1}  \}$ and labels ${\Tilde{\mathcal{L}}}_b = \{{\Tilde{\ell}}_0,\Tilde{\ell}_1,....,\Tilde{\ell}_{2^b-1}  \}$ 
+\end{enumerate}
+
+
+    
+\end{frame}
+
+\begin{frame}{Proposed DQA-LMS Algorithm}
+    \begin{enumerate}[]
+        \item We complete the set of thresholds $\mathcal{T}_b$ by adding $\tau_0 = -\infty$ and $\tau_{2^b} = \infty$ to the set $\Tilde{\mathcal{T}}_b$
+        \item We rescale the labels such that the variance of the auxiliary random variable is 1. To do this, we multiply each label in the set $\Tilde{\mathcal{L}}_b$ by 
+        \begin{align}
+            \alpha = \Bigg( 2\sum_{j=0}^{2^b-1}{{{\Tilde{\ell}}_j}^2(\phi(\sqrt{2{\mathcal{T}_{j+1}}^2}) - \phi(\sqrt{2{\mathcal{T}_{j}}^2})}) \Bigg)
+        \end{align}
+        to produce a set of suboptimal labels $\mathcal{L}_b = \alpha{\Tilde{\mathcal{L}}}_b$, where $\phi$ is the CDF of a standard Gaussian random variable.
+    \end{enumerate}
+    We generate these thresholds and labels offline to build $G_{k,b}$ for the proposed DQA-LMS algorithm
+\end{frame}
+
+\begin{frame}{Derivation of DQA-LMS}
+\begin{enumerate}[]
+    \item  We consider $x_k(t)$ and $d_k(t)$  as the analog input and output of the unknown system $w_0$ at node $k$. Let $x_k(i)$ and $d_k(i)$ denote the high precision sampled versions of $x_k(t)$ and $d_k(t)$ , and $x_{k,Q}(i)$ and $d_{k,Q}(i)$ denote the coarsely quantized versions of $x_k(i)$ and $d_k(i)$ respectively.
+    \item We assume the input signal at each node is Gaussian with zero mean and covariance matrix $R_{x_k} = \mathbb{E}[x_k{x_k}^H] = \sigma^2_{x,k}I_{M}$ for $k = 1,2,....,N$. Using equation (5) we can decompose $x_{k,Q}(i)$ and $d_{k,Q}(i)$ as
+    \begin{align}
+         x_{k,Q}(i) &= g_{k,b}(i)x_k(i) + q_{x,k}(i) \\
+         d_{k,Q}(i) &= Q(d_k(i) \approx g_{k,b}(i)d_k(i) + q_k(i)\\
+         &= g_{k,b}(i){w_0^H}x_k(i) + \hat{q}_k(i)
+    \end{align}
+\end{enumerate}
+   
+    
+\end{frame}
+
+\begin{frame}{Derivation of DQA-LMS}
+\begin{enumerate}[]
+    \item Here, $\hat{q}_k(i) = g_{k,b}(i)v_k(i) + q_k(i)$ and $g_{k,b}(i)$ are built from an estimate of $R_{x_k}$ given by $\hat{R}_{x_k} = x_k{x_k^H}$ that depends on choice of $x_k$ due to (1).
+    \item Because the adaptive algorithm recieves a quantized signal,$x_{Q,k}$ and the signal is assumed to be wide sense stationary, at each time instant, we estimate $\sigma_{x,k}^2$ using the variance of the recieving output, $\sigma_{x_{k,Q}}^2$ and the distortion factor of the $b-$ bit quantization, $\rho_{k,b}$ such that $\sigma_{x,k}^2 \approx \sigma_{x_{k,Q}}^2 + \rho_{k,b}$ where $\rho_{k,b} \approx {\frac{\pi{\sqrt 3}}{2}}2^{-2b}$ for a Gaussian signal using non-uniform quantization to obtain the scalar $g_{k,b}(i)$.
+\end{enumerate}
+    
+\end{frame}
+
+\begin{frame}{Derivation of DQA-LMS}
+\begin{enumerate}[]
+    \item We show next that a learning algorithm based directly on (10) is biased for estimating $w_0$, and show how to correct for this bias.
+    \item For this, let $\beta_k(i)$ be a coefficient to be chosen shortly, and define $\hat{d}_k(i)=\beta_k(i){w_k^H(i-1)}x_{k,Q}(i)$ and construct an MSE cost function defined by,
+    \begin{align}
+        J_k(w_k(i)) &= \mathbb{E}[|e_{k,Q}(i)|^2] \\
+        &= \mathbb{E}[|d_{k,Q}(i) - \hat{d}_k(i)|^2] \\
+        &= \mathbb{E}[|d_{k,Q}(i) - \beta_k(i){w_k^H(i-1)}x_{k,Q}(i)|^2]
+    \end{align}
+    which depends only on the observed quantized quantities $x_{k,Q}(i)$ $d_{k,Q}(i)$. For $\beta_k(i)=1$ as in DLMS, the quantization of $d_k(i)$ would result in biased estimated of $w_0$.
+\end{enumerate}
+    
+\end{frame}
+
+
+
+\begin{frame}{Derivation of DQA-LMS}
+    In the following, we show how to optimally choose $\beta_k(i)$ to reduce the bias. The proposed gradient-descent recursion to perform distributed learning based on (14) is described by 
+    \begin{align}
+        h_k(i) = w_k(i-1) - \mu_k\nabla J_k(w_k(-1))
+    \end{align}
+    To compute the gradient of (15) we write the error in (14) as 
+    \begin{align}
+        e_{k,Q}(i) &= d_{k,Q}(i) - \beta_k(i){w_k^H(i-1)}x_{k,Q}(i) \\
+        &= g_{k,b}(i){w_0^H}x_k(i)+\hat{q}_k(i)-\beta_k(i) \\
+      &   {w_k^H}(i-1)(g_{k,b}(i)x_k(i)+q_{x,k}(i)) \\
+        &= g_{k,b}(i)({w_0^H}(i)-\beta_k(i){w_k^H(i-1)}x_k(i)) \\
+       & - \beta_k(i){w_k^H(i-1)}q_{x,k}(i)+\hat{q}_k(i) 
+    \end{align}
+\end{frame}
+
+\begin{frame}{Derivation of DQA-LMS}
+We assume that $R_{x_k} = \mathbb{E}[x_k{x_k^H}] = \sigma^2_{x,k}I_M$ and $R_{q,k} = \mathbb{E}[q_{x,k}{q_{x,k}^H} = \sigma^2{q,k}I^M$ .Substituting (20) in (14) and taking the expected value of (15), we have
+\begin{align}
+    \mathbb{E}[h_k(i)] &= [{I_M} - {\mu_k}{g^2_{k,b}(i)}{\beta_k(i)}{R_{x_k}}] \\
+    & \mathbb{E}[{w_k}(i-1)] + {\mu}{g^2_{k,b}(i)}{R_{x_k}}{w_0^H} 
+\end{align}
+Substituting the values of $R_{x_k}$ and $R_{q,k}$ and taking the limit on (21), we obtain
+\begin{align}
+    \lim_{i \to +\infty} {\mathbb{E}[h_k(i)]} = \frac{1}{\beta_k(i)}\frac{g_{k,b}(i)\sigma^2_{x,k}}{g_{k,b}(i)\sigma^2_{x,k}+\sigma^2_{q,k}}
+\end{align}
+We conclude that the solution is unbiased if we choose,
+\begin{align}
+    \beta_k(i) = \frac{g_{k,b}(i)\sigma^2_{x,k}}{g_{k,b}(i)\sigma^2_{x,k}+\sigma^2_{q,k}}
+\end{align}
+\end{frame}
+
+\begin{frame}{Derivation of DQA-LMS}
+The gradient of $|e_{k,Q}(i)|^2$ with respect to $w_0^H$ is $\nabla J_k(w_k(i-1)) = -{\frac{g_{k,b}(i)\sigma^2_{x,k}}{g_{k,b}(i)\sigma^2_{x,k}+\sigma^2_{q,k}}}{x_{k,Q}(i)e^*_{k,Q}(i)}$ . After organising the terms of the gradient, we obtain the DQA-LMS algorithm:
+\begin{align}
+    h_k(i) &= w_k(i-1)+\frac{1}{\beta_k(i)}\frac{g_{k,b}(i)\sigma^2_{x,k}}{g_{k,b}(i)\sigma^2_{x,k}+\sigma^2_{q,k}}{x_{k,Q}(i)e^*_{k,Q}(i)} \\
+    w_k(i) &= \sum_{l \in \mathcal{N}_k}{a_{lhk}}h_l(i) \\
+    e_{k,Q}(i) &= d_{k,Q}(i) - {\frac{g_{k,b}(i)\sigma^2_{x,k}}{g_{k,b}(i)\sigma^2_{x,k}+\sigma^2_{q,k}}}{w_k^H(i-1)x_{k,Q}(i)} \\
+    g_{k,b}(i) &= \frac{1}{\sqrt{\sigma^2_{x_k}}}\sum_{j=0}^{2^b-1}{\frac{l_j}{\sqrt{\pi}}}[\exp(\frac{-{\tau^2_j}}{\sigma^2_{x_k}})-\exp(\frac{-{\tau^2_{j+1}}}{\sigma^2_{x_k}})]
+\end{align}
+    
+\end{frame}
+
+
+
+\begin{frame}{Computational Complexity and Energy Consumption}
+The following table shows the computational complexity of the DQA-LMS algorithm in terms of Number of additions and multiplications at node $k$ per time instant, where $n_k$ is the number of neighbour nodes connected to node $k$.
+
+\begin{figure}[!tbp]
+  \centering
+  {\includegraphics[width=0.8\textwidth]{1B.png}\label{fig:1A}}
+  
+  \caption{1b) Computational Complexity Per Time Instant}
+\end{figure}
+  \begin{enumerate}[]
+      \item At each time instant,the DQA-LMS performs a few more operations($\approx O(2^b)$) than DLMS.
+      \item However, the extra complexity of DQA-LMS allows the system to work in a more energy-efficient way.
+  \end{enumerate}  
+    
+\end{frame}
+\begin{frame}{Computational Complexity and Energy Consumption}
+In order to assess the power savings by low resolution quantization, we consider a network with $N$ nodes in which each node uses two ADCs.
+\newline The power consumption of each ADC is 
+\begin{align}
+    P_{ADC}(b) = cB2^{b}
+\end{align}
+Here,
+\begin{enumerate}[]
+    \item $B$ is the bandwith(related to sampling rate),
+    \item $b$ is the number of quantization bits of the ADC,
+    \item $c$ is the power consumption per conversion step.
+\end{enumerate}
+Therefore, the total power consumption of the ADCs in the network is 
+\begin{align}
+    P_{ADC,T}(b) = 2NcB2^{b}
+\end{align}
+\end{frame}
+
+\begin{frame}{Computational Complexity and Energy Consumption}
+The following figure shows an example of the total power consumption of the ADCs in a narrowband IoT(NB-IoT) network running diffusion adaptation consisting of 20 nodes with bandwidth $B = 200kHz$ and considering the power consumption per conversion step of each ADC, $c = 494fJ$
+
+\begin{figure}[!tbp]
+  \centering
+  {\includegraphics[width=0.6\textwidth]{1C.png}\label{fig:1A}}
+  
+  \caption{1c) Power consumption of ADCs in an adaptive IoT network}
+\end{figure}
+\end{frame}
+
+
+
+    
+
+\begin{frame}{Simulation Results}
+\begin{enumerate}[]
+    \item Here, we assess the performance of the DQA-LMS algorithm for a parameter estimation problem in an IoT network with $N = 20$ nodes. The impulse response system of the unknown system has $M = 8$ taps, is generated normally and normalised to one.
+    \item The input signals $x_k(i)$ at each node are generated by passing a white Gaussian noise process with $\sigma^2_{x,k}$ through a first order regressive model with transfer function $\frac{1}{1-r_x,k^{z^{-1}}} $ where $r_{x,k} \in (0.3,0.5)$ are the correlation coefficients and quantized using Lloyd-Max quantization scheme to generate $x_{k,Q}(i)$.
+    \item The noise samples from each node are drawn from a zero mean white Gaussian process with variance $\sigma^2_{v,k}$.
+\end{enumerate}
+
+    \end{frame}
+
+\begin{frame}{Simulation Results}
+\begin{figure}[!tbp]
+  \centering
+  \subfloat[Distributed network structure]{\includegraphics[width=0.4\textwidth]{1Da.PNG}\label{fig:1a}}
+  \hfill
+  \subfloat[Variance and correlation coefficients]{\includegraphics[width=0.4\textwidth]{1Db.PNG}\label{fig:1b}}
+  \caption{A wireless network with $N=20$ nodes}
+\end{figure}
+    
+\end{frame}
+\begin{frame}{Simulation Results}
+The simulated mean square deviation(MSD) learning curves are obtained by ensemble averaging over 100 independent trials.We choose the same step size for all agents, i.e., $\mu_k = 0.05$. The combining coefficients $a_{lk}$ are computed by the Metropolis rule.
+
+\begin{figure}[!tbp]
+  \centering
+  {\includegraphics[width=0.6\textwidth]{1E.png}\label{fig:1A}}
+  
+  \caption{1E) The MSD curves for DLMS and DQA-LMS algorithms}
+\end{figure}
+    
+\end{frame}
+
+\begin{frame}{Simulation Results}
+\begin{enumerate}[]
+    \item Curve 1 shows the theoretical MSD of DLMS.
+    \item Curve 2 shows the standard DLMS performance assuming full resolution ADCs to perform system identification.
+    \item Curves 3,5 and 7 show the MSD evolution of standard DLMS with low resolution signals coarsely quantized with 1,2 and 3 bits respectively.
+    \item Curves 4,6 and 8 show the MSD performance of the propsoed DQA-LMS algorithm that improves the error measurement confronted with coarsely quantized signals.
+\end{enumerate}
+The performance of the proposed DQA-LMS algorithm is closer to the DLMS while it reduces about $ 90\% $ of the power consumption by the ADCs in the network.
+    
+\end{frame}
+\end{document}
